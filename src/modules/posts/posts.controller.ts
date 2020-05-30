@@ -18,6 +18,7 @@ import { CreatePostDto } from './post.dto';
 import { DemoService } from './providers/demo/demo.service';
 import { DemoGuard } from '../../core/guards/demo.guard';
 import { DemoRolesGuard } from '../../core/guards/demo-roles.guard';
+import { Roles } from '../../core/decorator/roles.decorator';
 // import { DemoFilter } from '../../core/filters/demo.filter';
 
 @Controller('posts')
@@ -37,6 +38,7 @@ export class PostsController {
   }
 
   @Get(':id')
+  @Roles('member') // 使用自定义装饰器
   show(@Param('id', ParseIntPipe) id) {
     console.log('id: ', typeof id);
     return {
@@ -48,7 +50,8 @@ export class PostsController {
   // @UseFilters(DemoFilter) // 方法级过滤器
   // @UseGuards(DemoGuard) // 方法级守卫
   @UsePipes(ValidationPipe)
-  @SetMetadata('roles', ['member'])
+  // @SetMetadata('roles', ['member'])
+  @Roles('member') // 使用自定义装饰器
   store(@Body() post: CreatePostDto) {
     // throw new HttpException('没有权限', HttpStatus.FORBIDDEN);
     // throw new ForbiddenException('没有权限');
