@@ -4,15 +4,17 @@ import {
   Param,
   Post,
   Body,
-  HttpException,
-  HttpStatus,
-  ForbiddenException,
-  UseFilters,
+  ValidationPipe,
+  UsePipes,
+  ParseIntPipe,
+  // HttpException,
+  // HttpStatus,
+  // ForbiddenException,
+  // UseFilters,
 } from '@nestjs/common';
-import { CreatePost } from './post.dto';
+import { CreatePostDto } from './post.dto';
 import { DemoService } from './providers/demo/demo.service';
-import { throws } from 'assert';
-import { DemoFilter } from '../../core/filters/demo.filter';
+// import { DemoFilter } from '../../core/filters/demo.filter';
 
 @Controller('posts')
 // @UseFilters(DemoFilter) // 模块级过滤器
@@ -30,19 +32,19 @@ export class PostsController {
   }
 
   @Get(':id')
-  show(@Param() params) {
-    console.log(params);
+  show(@Param('id', ParseIntPipe) id) {
+    console.log('id: ', typeof id);
     return {
-      title: `Post ${params.id}`,
-      subtitle: 'subtitle',
+      title: `Post ${id}`,
     };
   }
 
   @Post()
   // @UseFilters(DemoFilter) // 方法级过滤器
-  store(@Body() post: CreatePost) {
+  @UsePipes(ValidationPipe)
+  store(@Body() post: CreatePostDto) {
     // throw new HttpException('没有权限', HttpStatus.FORBIDDEN);
-    throw new ForbiddenException('没有权限');
-    // this.demoService.create(post);
+    // throw new ForbiddenException('没有权限');
+    this.demoService.create(post);
   }
 }
