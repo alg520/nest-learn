@@ -4,8 +4,7 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class DemoRolesGuard implements CanActivate {
-
-  constructor(private readonly reflector: Reflector){}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(
     context: ExecutionContext,
@@ -14,16 +13,14 @@ export class DemoRolesGuard implements CanActivate {
     // console.log('class:', context.getClass().toString());
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
-    // console.log(roles);
-
-    if (!roles){
+    if (!roles) {
       return false;
     }
 
     const request = context.switchToHttp().getRequest();
-    const {user} = request;
+    const { user } = request;
     const hasRole = () => user.roles.some(role => roles.includes(role));
-    
-    return user && user.roles && hasRole();
+
+    return hasRole();
   }
 }

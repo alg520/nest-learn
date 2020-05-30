@@ -6,13 +6,14 @@ export class DemoMiddleware implements NestMiddleware {
     // console.log('demo middleware');
     req.user = {
       roles: ['guest'],
-    };
+    }
 
     if (req.header('x-demo') === 'secret') {
       req.user = {
-        roles: ['member'],
-      };
+        roles: ['member']
+      }
     }
+    
     next();
   }
 }
