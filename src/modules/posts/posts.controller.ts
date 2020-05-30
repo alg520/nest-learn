@@ -26,6 +26,7 @@ import { LoggingInterceptor } from '../../core/interceptors/logging.interceptor'
 import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
 import { ErrorsInterceptor } from '../../core/interceptors/errors.interceptor';
 import { User } from '../../core/decorators/user.decorator';
+import { DemoPipe } from '../../core/pipes/demo.pipe';
 // import { DemoFilter } from '../../core/filters/demo.filter';
 
 @Controller('posts')
@@ -63,7 +64,7 @@ export class PostsController {
   @UsePipes(ValidationPipe)
   // @SetMetadata('roles', ['member'])
   @Roles('member') // 使用自定义装饰器
-  store(@Body() post: CreatePostDto, @User('demo') user) {
+  store(@Body(DemoPipe) post: CreatePostDto, @User('demo', DemoPipe) user) {
     console.log(user);
     
     // throw new HttpException('没有权限', HttpStatus.FORBIDDEN);
