@@ -9,6 +9,8 @@ import {
   ParseIntPipe,
   UseGuards,
   SetMetadata,
+  UseInterceptors,
+  ForbiddenException,
   // HttpException,
   // HttpStatus,
   // ForbiddenException,
@@ -19,11 +21,15 @@ import { DemoService } from './providers/demo/demo.service';
 import { DemoGuard } from '../../core/guards/demo.guard';
 import { DemoRolesGuard } from '../../core/guards/demo-roles.guard';
 import { Roles } from '../../core/decorator/roles.decorator';
+import { LoggingInterceptor } from '../../core/interceptors/logging.interceptor';
+import { TransformInterceptor } from '../../core/interceptors/transform.interceptor';
+import { ErrorsInterceptor } from '../../core/interceptors/errors.interceptor';
 // import { DemoFilter } from '../../core/filters/demo.filter';
 
 @Controller('posts')
 // @UseFilters(DemoFilter) // 模块级过滤器
-@UseGuards(DemoGuard) // 模块级守卫
+// @UseGuards(DemoGuard) // 模块级守卫
+// @UseInterceptors(LoggingInterceptor) // 模块级拦截器
 export class PostsController {
   // private readonly demoService: DemoService;
   // constructor(demoService: DemoService){
@@ -33,14 +39,17 @@ export class PostsController {
   constructor(private readonly demoService: DemoService) {}
 
   @Get()
+  // @UseInterceptors(TransformInterceptor) // 方法级拦截器
+  @UseInterceptors(ErrorsInterceptor)
+  @Roles('member') // 使用自定义装饰器
   index() {
-    return this.demoService.findAll();
+    throw new ForbiddenException();
+    // return this.demoService.findAll();
   }
 
   @Get(':id')
-  @Roles('member') // 使用自定义装饰器
   show(@Param('id', ParseIntPipe) id) {
-    console.log('id: ', typeof id);
+    // console.log('id: ', typeof id);
     return {
       title: `Post ${id}`,
     };
